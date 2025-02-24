@@ -13,7 +13,7 @@ def routes(app):
     app.route('/<agent_id>/token', methods=['POST'])(generate_token)
     app.route('/conference/<agent_id>/call', methods=['POST'])(call_agent)
     app.route('/conference/wait', methods=['POST'])(wait)
-    app.route('/conference/<conference_id>/connect/<agent_id>', methods=['POST'])(
+    app.route('/conference/<conference_id>/connect/<agent_id>', methods=['POST', 'GET'])(
         connect_agent
     )
 
