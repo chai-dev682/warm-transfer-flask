@@ -2,12 +2,19 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_migrate import upgrade as upgrade_database
 from warm_transfer_flask import app, db, prepare_app
+import uvicorn
+from warm_transfer_flask.fastapi_app import app as fastapi_app
 
 prepare_app()
 migrate = Migrate(app, db)
 
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
+
+@manager.command 
+def runserver():
+    """Run the server with FastAPI"""
+    uvicorn.run(fastapi_app, host="0.0.0.0", port=5000)
 
 
 @manager.command

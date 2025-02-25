@@ -15,6 +15,8 @@ class DefaultConfig(object):
     TWILIO_API_SECRET = os.environ.get('TWILIO_API_SECRET', None)
     TWILIO_NUMBER = os.environ.get('TWILIO_NUMBER', None)
     TWIML_APPLICATION_SID = os.environ.get('TWIML_APPLICATION_SID', None)
+    ELEVENLABS_API_KEY = os.environ.get('ELEVENLABS_API_KEY')
+    ELEVENLABS_AGENT_ID = os.environ.get('ELEVENLABS_AGENT_ID')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
 

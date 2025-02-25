@@ -35,3 +35,7 @@ typed-ast==1.5.5
 typing-extensions==3.7.4.3
 urllib3==1.26.2
 Werkzeug==1.0.1
+elevenlabs==1.51.0
+fastapi==0.115.8
+uvicorn==0.33.0
+python-multipart==0.0.20
