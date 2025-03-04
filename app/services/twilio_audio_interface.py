@@ -13,6 +13,7 @@ class TwilioAudioInterface(AudioInterface):
         self.stream_sid = None
         self.input_callback = None
         self.output_thread = None
+        self._loop = None
 
     def start(self, input_callback: Callable[[bytes], None]):
         self.input_callback = input_callback
@@ -34,7 +35,13 @@ class TwilioAudioInterface(AudioInterface):
                 _ = self.output_queue.get(block=False)
         except queue.Empty:
             pass
-        asyncio.run(self._send_clear_message_to_twilio())
+        # Use a new event loop for this call
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            loop.run_until_complete(self._send_clear_message_to_twilio())
+        finally:
+            loop.close()
 
     async def handle_twilio_message(self, data):
         try:
@@ -49,8 +56,19 @@ class TwilioAudioInterface(AudioInterface):
             print(f"Error in input_callback: {e}")
 
     def _output_thread(self):
-        while not self.should_stop.is_set():
-            asyncio.run(self._send_audio_to_twilio())
+        # Create a new event loop for this thread
+        self._loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self._loop)
+        
+        try:
+            while not self.should_stop.is_set():
+                try:
+                    # Run the coroutine in the event loop
+                    self._loop.run_until_complete(self._send_audio_to_twilio())
+                except Exception as e:
+                    print(f"Error in output thread: {str(e)}")
+        finally:
+            self._loop.close()
 
     async def _send_audio_to_twilio(self):
         try:
